@@ -6,6 +6,7 @@ import { getAllContacts, getContactById } from './services/contacts.js';
 
 export const setupServer = () => {
   const app = express();
+  const PORT = process.env.PORT || 3000;
 
   app.use(cors());
   app.use(
@@ -60,8 +61,6 @@ export const setupServer = () => {
       message: 'Not found',
     });
   });
-
-  const PORT = process.env.PORT || 3000;
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
