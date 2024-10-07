@@ -8,7 +8,7 @@ export const setupServer = () => {
   const PORT = process.env.PORT || 3000;
 
   app.use(cors());
-  app.use(express.json());
+
   app.use(
     pino({
       transport: {
@@ -16,10 +16,6 @@ export const setupServer = () => {
       },
     }),
   );
-
-  app.get('/', (req, res) => {
-    res.send('Welcome to the Contacts API!');
-  });
 
   app.get('/contacts', async (req, res) => {
     try {
