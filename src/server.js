@@ -16,7 +16,9 @@ export const setupServer = () => {
       },
     }),
   );
-
+  app.get('/', (req, res) => {
+    res.json({ message: 'Сервер працює' });
+  });
   app.get('/contacts', async (req, res) => {
     try {
       const contacts = await getAllContacts();
@@ -56,7 +58,7 @@ export const setupServer = () => {
     }
   });
 
-  app.use((req, res) => {
+  app.use((req, res, next) => {
     res.status(404).json({
       message: 'Not found',
     });
