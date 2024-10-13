@@ -33,34 +33,19 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const createContactController = async (req, res) => {
-  const newContact = {
-    name: req.body.name,
-    phoneNumber: req.body.phoneNumber,
-    email: req.body.email,
-    isFavourite: req.body.isFavourite,
-    contactType: req.body.contactType,
-  };
-
-  const result = await createContact(newContact);
+  const newContact = await createContact(req.body);
 
   res.status(201).json({
     status: 201,
     message: `Successfully created a contact!`,
-    data: result,
+    data: newContact,
   });
 };
 
 export const updateContactController = async (req, res) => {
   const { contactId } = req.params;
-  const newContact = {
-    name: req.body.name,
-    phoneNumber: req.body.phoneNumber,
-    email: req.body.email,
-    isFavourite: req.body.isFavourite,
-    contactType: req.body.contactType,
-  };
 
-  const result = await updateContact(contactId, newContact);
+  const result = await updateContact(contactId, req.body);
 
   if (!result) {
     throw createHttpError(404, 'Contact not found');
