@@ -11,6 +11,7 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { isValidId } from '../middlewares/isValidId.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { contactSchema } from '../validation/validation.js';
+import { authenticate } from '../middlewares/authenticate.js';
 
 const router = express.Router();
 const jsonParser = express.json({
@@ -45,5 +46,6 @@ router.delete(
   isValidId,
   ctrlWrapper(deleteContactController),
 );
-
+router.use(authenticate);
+router.get('/', ctrlWrapper(getContactsController));
 export default router;
