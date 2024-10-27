@@ -36,7 +36,7 @@ export const loginUser = async (email, password) => {
     accessToken,
     refreshToken,
     accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
-    refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    refreshTokenValidUntil: new Date(Date.now() + 30 * 60 * 60 * 1000),
   });
 };
 
@@ -65,7 +65,7 @@ export const refreshSession = async (sessionId, refreshToken) => {
     accessToken: crypto.randomBytes(30).toString('base64'),
     refreshToken: crypto.randomBytes(30).toString('base64'),
     accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
-    refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    refreshTokenValidUntil: new Date(Date.now() + 30 * 60 * 60 * 1000),
   });
 };
 
