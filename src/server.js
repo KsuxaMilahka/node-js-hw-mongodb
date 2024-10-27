@@ -1,15 +1,16 @@
 import express from 'express';
-
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import pino from 'pino-http';
 import 'dotenv/config';
 import { initMongoConnection } from './db/initMongoConnection.js';
 
-import contactsRouters from './routers/contacts.js';
+import routers from './routers/index.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
 const app = express();
+
 export const setupServer = async () => {
   try {
     await initMongoConnection();
@@ -24,7 +25,7 @@ export const setupServer = async () => {
   }
 
   app.use(cors());
-  // app.use(express.json());
+  app.use(cookieParser());
   app.use(
     pino({
       transport: {
@@ -33,7 +34,7 @@ export const setupServer = async () => {
     }),
   );
 
-  app.use('/', contactsRouters);
+  app.use('/', routers);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
