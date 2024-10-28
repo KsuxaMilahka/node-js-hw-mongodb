@@ -1,4 +1,6 @@
+import createHttpError from 'http-errors';
 import { Contact } from '../models/contact.js';
+import { skipMiddlewareFunction } from 'mongoose';
 
 export const getAllContacts = async (
   userId,
@@ -8,34 +10,43 @@ export const getAllContacts = async (
   sortBy = 'name',
   sortOrder = 'asc',
 ) => {
-  const searchFilter = { ...filter, userId };
+  if (!userId) {
+    throw createHttpError(400, 'Invalid user ID');
+  }
+  const query = { userId, ...filter };
+  if (filter.contactType) {
+    query.contactType = filter.contactType;
+  }
 
-  const totalItems = await Contact.countDocuments(searchFilter);
+  if (filter.isFavourite !== undefined) {
+    query.isFavourite = filter.isFavourite;
+  }
 
-  const contacts = await Contact.find(searchFilter)
-    .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 })
-    .skip((page - 1) * perPage)
-    .limit(perPage);
+  const totalItems = await Contact.countDocuments(query);
+  contacts.where('userId').equals(userId);
+  const contacts = await Promise.all([
+    Contact.countDocuments(query),
+    query
+      .sort({ [sortBy]: sortOrder })
+      .skip(skip)
+      .limit(perPage),
+  ]);
 
   return { contacts, totalItems };
 };
 
-export const getContactById = async (contactId, userId) => {
-  return await Contact.findOne({ _id: contactId, userId });
+export const getContactById = async (contactId) => {
+  return await Contact.findOne({ _id: contactId });
 };
 
 export const createContact = async (newContact) => {
   return await Contact.create(newContact);
 };
 
-export const updateContact = async (contactId, userId, newContact) => {
-  return await Contact.findOneAndUpdate(
-    { _id: contactId, userId },
-    newContact,
-    {
-      new: true,
-    },
-  );
+export const updateContact = async (contactId, newContact) => {
+  return await Contact.findOneAndUpdate({ _id: contactId }, newContact, {
+    new: true,
+  });
 };
 
 export const deleteContact = async (contactId, userId) => {

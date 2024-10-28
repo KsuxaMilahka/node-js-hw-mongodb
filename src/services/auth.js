@@ -41,10 +41,7 @@ export const loginUser = async (email, password) => {
 };
 
 export const refreshSession = async (sessionId, refreshToken) => {
-  const session = await Session.findOne({
-    _id: sessionId,
-    refreshToken,
-  });
+  const session = await Session.findById(sessionId);
 
   if (!session) {
     throw createHttpError(401, 'Session not found');
