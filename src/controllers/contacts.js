@@ -18,18 +18,24 @@ export const getContactsController = async (req, res) => {
   } = req.query;
 
   const { _id: userId } = req.user;
-  const filter = { userId };
-  if (type) filter.contactType = type;
-  if (isFavourite) filter.isFavourite = isFavourite === 'true';
 
-  const { contacts, totalItems } = await getAllContacts(
+  const filter = { userId };
+
+  if (type !== undefined) {
+    filter.contactType = type;
+  }
+  if (isFavourite !== undefined) {
+    filter.isFavourite = isFavourite === 'true';
+  }
+
+  const { contacts, totalItems } = await getAllContacts({
     userId,
     filter,
     page,
     perPage,
     sortBy,
     sortOrder,
-  );
+  });
 
   const totalPages = Math.ceil(totalItems / perPage);
   const hasPreviousPage = page > 1;

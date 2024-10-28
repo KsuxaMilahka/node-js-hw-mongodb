@@ -14,6 +14,7 @@ import { contactSchema } from '../validation/validation.js';
 import { authenticate } from '../middlewares/authenticate.js';
 
 const router = express.Router();
+
 const jsonParser = express.json({
   type: 'application/json',
 });
@@ -35,9 +36,9 @@ router.post(
 
 router.patch(
   '/contacts/:contactId',
-  jsonParser,
   isValidId,
-  validateBody(contactSchema),
+  jsonParser,
+  // validateBody(contactSchema),
   ctrlWrapper(updateContactController),
 );
 
@@ -46,6 +47,6 @@ router.delete(
   isValidId,
   ctrlWrapper(deleteContactController),
 );
-router.use(authenticate);
-router.get('/', ctrlWrapper(getContactsController));
+// router.use(authenticate);
+// router.get('/', ctrlWrapper(getContactsController));
 export default router;
