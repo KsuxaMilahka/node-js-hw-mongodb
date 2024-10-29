@@ -1,6 +1,5 @@
 import createHttpError from 'http-errors';
 import { Contact } from '../models/contact.js';
-import { skipMiddlewareFunction } from 'mongoose';
 
 export const getAllContacts = async (
   userId,
@@ -13,6 +12,7 @@ export const getAllContacts = async (
   if (!userId) {
     throw createHttpError(400, 'Invalid user ID');
   }
+
   const query = { userId, ...filter };
   if (filter.contactType) {
     query.contactType = filter.contactType;
@@ -22,21 +22,23 @@ export const getAllContacts = async (
     query.isFavourite = filter.isFavourite;
   }
 
-  const totalItems = await Contact.countDocuments(query);
-  contacts.where('userId').equals(userId);
-  const contacts = await Promise.all([
-    Contact.countDocuments(query),
-    query
-      .sort({ [sortBy]: sortOrder })
+  const skip = (page - 1) * perPage;
+  const limit = perPage;
+
+  const [contacts, totalItems] = await Promise.all([
+    Contact.find(query)
       .skip(skip)
-      .limit(perPage),
+      .limit(limit)
+      .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 })
+      .exec(),
+    Contact.countDocuments(query),
   ]);
 
   return { contacts, totalItems };
 };
 
-export const getContactById = async (contactId) => {
-  return await Contact.findOne({ _id: contactId });
+export const getContactById = async (contactId, userId) => {
+  return await Contact.findOne({ _id: contactId, userId });
 };
 
 export const createContact = async (newContact) => {
