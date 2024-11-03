@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -10,6 +12,8 @@ import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
 const app = express();
+
+app.use('/photos', express.static(path.resolve('src', 'public/photos')));
 
 export const setupServer = async () => {
   try {
